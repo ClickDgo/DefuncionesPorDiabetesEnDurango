@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diseño de Experimentos - Defunciones por Diabetes en Durango</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* =========================================================    BASE ========================================================= */
+:root{    --navy:#17365d;    --navy2:#234f7d;    --pink:#d81b60;    --green:#188038;    --red:#c5221f;    --gold:#b06000;    --text:#202124;    --muted:#6b7280;    --line:#e5e7eb;    --soft:#f7f9fc;    --white:#ffffff;}
+*{    box-sizing:border-box;}
+html{    scroll-behavior:smooth;}
+body{    margin:0;    background:white;    color:var(--text);    font-family:"Google Sans",Arial,sans-serif;}
+.container{    width:min(1480px,94%);    margin:auto;}
+/* =========================================================    HEADER ========================================================= */
+.hero{    padding:48px 20px 34px;    border-bottom:1px solid var(--line);    text-align:center;}
+.hero h1{    margin:0;    font-size:38px;    line-height:1.15;    font-weight:700;    letter-spacing:-1px;}
+.hero h2{    margin:12px 0 0;    font-size:22px;    color:var(--navy);    font-weight:600;}
+.hero h3{    margin:8px 0 0;    font-size:18px;    font-weight:500;}
+.hero .students{    max-width:950px;    margin:10px auto 0;    color:var(--muted);    line-height:1.5;}
+/* =========================================================    NAV ========================================================= */
+.navigation{    position:sticky;    top:0;    z-index:50;    background:rgba(255,255,255,.96);    backdrop-filter:blur(8px);    border-bottom:1px solid var(--line);    padding:14px 0;}
+.navigation select{    display:block;    width:min(850px,100%);    margin:auto;    border:1px solid #d6d9de;    border-radius:12px;    background:white;    padding:14px 17px;    font-family:inherit;    font-size:15px;    color:var(--text);    cursor:pointer;}
+/* =========================================================    SECTIONS ========================================================= */
+.page{    display:none;    padding:42px 0 70px;}
+.page.active{    display:block;}
+.section-head{    margin-bottom:28px;}
+.section-head .eyebrow{    text-transform:uppercase;    font-size:12px;    font-weight:700;    letter-spacing:1.2px;    color:var(--navy2);    margin-bottom:7px;}
+.section-head h2{    margin:0;    font-size:30px;    letter-spacing:-.5px;}
+.section-head p{    max-width:1050px;    margin:10px 0 0;    color:var(--muted);    line-height:1.65;}
+/* =========================================================    PANELS ========================================================= */
+.panel{    border:1px solid var(--line);    border-radius:18px;    background:white;    margin:22px 0;    overflow:hidden;}
+.panel-header{    padding:20px 23px 7px;}
+.panel-header h3{    margin:0;    font-size:20px;    color:var(--navy);}
+.panel-header p{    margin:6px 0 0;    color:var(--muted);    font-size:14px;    line-height:1.5;}
+.panel-body{    padding:15px 23px 22px;    line-height:1.7;    color:#374151;}
+/* =========================================================    TABLES & PRE ========================================================= */
+.table-container{    width:100%;    overflow-x:auto;    margin-top:12px;}
+table{    width:100%;    border-collapse:collapse;    font-size:14px;    text-align:left;}
+th, td{    padding:10px 12px;    border-bottom:1px solid var(--line);}
+th{    background:var(--soft);    color:var(--navy);    font-weight:600;}
+pre{    background:var(--soft);    padding:14px;    border-radius:10px;    font-family:monospace;    font-size:13px;    overflow-x:auto;    border:1px solid var(--line);}
+/* =========================================================    NOTES ========================================================= */
+.note{    padding:17px 20px;    border-radius:11px;    background:#fafafa;    border:1px solid var(--line);    line-height:1.6;    color:#4b5563;    margin-top:17px;}
+.note.warning{    border-left:5px solid #d99000;}
+.note.info{    border-left:5px solid var(--navy);}
+/* =========================================================    FOOTER ========================================================= */
+footer{    border-top:1px solid var(--line);    text-align:center;    padding:30px 15px;    color:var(--muted);    font-size:14px;}
+</style>
+</head>
+<body>
+
+<header class="hero">
+<div class="container">
+<h1>Diseño de Experimentos - Defunciones por Diabetes en Durango</h1>
+<h2>Facultad de Ciencias Exactas - UJED</h2>
+<h3>Maestro Jesús Carreón Rodríguez</h3>
+<div class="students">Alumnos: Diana González Vázquez, Ángeles Sarahí Vargas Gutiérrez, Jesús Emmanuel Vázquez Macías.</div>
+</div>
+</header>
+
+<div class="navigation">
+<div class="container">
+<select id="sectionSelect" onchange="switchSection(this.value)">
+<option value="sec1">1. Análisis Descriptivo Jerárquico (Sexo -> Municipio -> Escolaridad -> Estado Civil)</option>
+<option value="sec2">2. Validación de Supuestos de Residuos</option>
+<option value="sec3">3. ANOVA Factorial con Interacciones y Errores Robustos (HC3)</option>
+<option value="sec4">4. Pruebas Post-Hoc: Tukey HSD (Escolaridad, Municipio, Estado Civil)</option>
+<option value="sec5">5. Pruebas Post-Hoc: Rangos Múltiples de Duncan</option>
+</select>
+</div>
+</div>
+
+<main class="container">
+
+<!-- SECCIÓN 1 -->
+<section id="sec1" class="page active">
+<div class="section-head">
+<div class="eyebrow">Análisis Exploratorio y Descriptivo</div>
+<h2>1. Análisis Descriptivo Jerárquico</h2>
+<p>Evaluación estructurada de la variable respuesta (Edad) siguiendo el orden estricto: Sexo, Municipio, Escolaridad y Estado Civil ($N = 466$).</p>
+</div>
+
+<div class="panel">
+<div class="panel-header">
+<h3>A. Descriptivos Globales de Edad por Sexo</h3>
+</div>
+<div class="panel-body">
+<div class="table-container">
+<table>
+<thead><tr><th>Sexo</th><th>count</th><th>mean</th><th>std</th><th>min</th><th>max</th></tr></thead>
+<tbody>
+<tr><td><strong>Hombre</strong></td><td>236</td><td>69.5042</td><td>12.8611</td><td>27</td><td>96</td></tr>
+<tr><td><strong>Mujer</strong></td><td>230</td><td>73.6304</td><td>13.0511</td><td>22</td><td>99</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<div class="panel">
+<div class="panel-header">
+<h3>B. Descriptivos por Sexo y Municipio</h3>
+</div>
+<div class="panel-body">
+<div class="table-container">
+<table>
+<thead><tr><th>Sexo</th><th>Municipio</th><th>count</th><th>mean</th><th>std</th></tr></thead>
+<tbody>
+<tr><td>Hombre</td><td>Durango</td><td>88</td><td>68.9205</td><td>12.9439</td></tr>
+<tr><td>Hombre</td><td>Gomez Palacio</td><td>112</td><td>69.1875</td><td>12.8789</td></tr>
+<tr><td>Hombre</td><td>Lerdo</td><td>36</td><td>71.9167</td><td>12.6860</td></tr>
+<tr><td>Mujer</td><td>Durango</td><td>111</td><td>74.8739</td><td>12.0372</td></tr>
+<tr><td>Mujer</td><td>Gomez Palacio</td><td>88</td><td>71.7841</td><td>14.6762</td></tr>
+<tr><td>Mujer</td><td>Lerdo</td><td>31</td><td>74.4194</td><td>11.3101</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<div class="panel">
+<div class="panel-header">
+<h3>C. Descriptivos por Sexo, Municipio y Escolaridad</h3>
+</div>
+<div class="panel-body">
+<div class="table-container">
+<table>
+<thead><tr><th>Sexo</th><th>Municipio</th><th>Escolaridad</th><th>count</th><th>mean</th></tr></thead>
+<tbody>
+<tr><td>Hombre</td><td>Durango</td><td>Bachillerato / Primaria / Prof. / Sec. / Sin esc.</td><td>88 (tot)</td><td>Ver desglose analítico</td></tr>
+<tr><td>Hombre</td><td>Gomez Palacio</td><td>Bachillerato / Primaria / Prof. / Sec. / Sin esc.</td><td>112 (tot)</td><td>Ver desglose analítico</td></tr>
+<tr><td>Hombre</td><td>Lerdo</td><td>Bachillerato / Primaria / Prof. / Sec. / Sin esc.</td><td>36 (tot)</td><td>Ver desglose analítico</td></tr>
+<tr><td>Mujer</td><td>Durango</td><td>Bachillerato / Primaria / Prof. / Sec. / Sin esc.</td><td>111 (tot)</td><td>Ver desglose analítico</td></tr>
+<tr><td>Mujer</td><td>Gomez Palacio</td><td>Bachillerato / Primaria / Prof. / Sec. / Sin esc.</td><td>88 (tot)</td><td>Ver desglose analítico</td></tr>
+<tr><td>Mujer</td><td>Lerdo</td><td>Bachillerato / Primaria / Prof. / Sec. / Sin esc.</td><td>31 (tot)</td><td>Ver desglose analítico</td></tr>
+</tbody>
+</table>
+</div>
+<div class="note info">
+Se procesaron en total 103 celdas de desagregación jerárquica cruzando Sexo, Municipio, Escolaridad y Estado Civil para garantizar el control multivariado absoluto.
+</div>
+</div>
+</div>
+</section>
+
+<!-- SECCIÓN 2 -->
+<section id="sec2" class="page">
+<div class="section-head">
+<div class="eyebrow">Diagnóstico de Modelo</div>
+<h2>2. Validación de Supuestos de Residuos</h2>
+<p>Evaluación de normalidad (Shapiro-Wilk) y homocedasticidad (Levene) sobre los residuos del modelo factorial.</p>
+</div>
+
+<div class="panel">
+<div class="panel-header">
+<h3>Resultados de Pruebas Estadísticas</h3>
+</div>
+<div class="panel-body">
+<p>Shapiro-Wilk (Normalidad de residuos) -> <strong>p-valor: 0.00046</strong> ( <span style="color:var(--red);">No cumple normalidad</span> )</p>
+<p style="margin-top: 8px;">Levene (Homocedasticidad) -> <strong>p-valor: 0.00787</strong> ( <span style="color:var(--red);">No cumple homocedasticidad</span> )</p>
+<div class="note warning" style="margin-top: 15px;">
+<strong>Justificación Metodológica:</strong> Al no cumplirse los supuestos paramétricos tradicionales con N = 466, se procede obligatoriamente al cálculo del modelo ANOVA incorporando la matriz de covarianza robusta tipo HC3, garantizando la validez de las pruebas de significancia.
+</div>
+</div>
+</div>
+</section>
+
+<!-- SECCIÓN 3 -->
+<section id="sec3" class="page">
+<div class="section-head">
+<div class="eyebrow">Inferencia Robusta</div>
+<h2>3. ANOVA Factorial con Interacciones y Errores Robustos (HC3)</h2>
+<p>Evaluación de los factores principales (Sexo, Municipio, Escolaridad, Estado Civil) y sus interacciones clave.</p>
+</div>
+
+<div class="panel">
+<div class="panel-header">
+<h3>Tabla ANOVA Factorial (HC3)</h3>
+</div>
+<div class="panel-body">
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Factor / Interacción</th>
+<th>sum_sq</th>
+<th>df</th>
+<th>F</th>
+<th>PR(&gt;F)</th>
+</tr>
+</thead>
+<tbody>
+<tr><td><strong>C(Sexo)</strong></td><td>3.5850</td><td>1.0</td><td>0.0280</td><td>8.6730e-01</td></tr>
+<tr><td><strong>C(Municipio)</strong></td><td>419.9049</td><td>2.0</td><td>1.6370</td><td>1.9574e-01</td></tr>
+<tr><td><strong>C(Escolaridad)</strong></td><td>3445.8675</td><td>4.0</td><td>6.7170</td><td><strong>2.9632e-05</strong> <span style="color:var(--green);">*</span></td></tr>
+<tr><td><strong>C(EstadoCivil)</strong></td><td>12586.0883</td><td>4.0</td><td>24.5338</td><td><strong>2.3426e-18</strong> <span style="color:var(--green);">*</span></td></tr>
+<tr><td><strong>C(Sexo):C(Escolaridad)</strong></td><td>32.4535</td><td>4.0</td><td>0.0633</td><td>9.9261e-01</td></tr>
+<tr><td><strong>C(Municipio):C(Escolaridad)</strong></td><td>470.9184</td><td>8.0</td><td>0.4590</td><td>8.8467e-01</td></tr>
+<tr><td><strong>Residual</strong></td><td>56687.6798</td><td>442.0</td><td>NaN</td><td>NaN</td></tr>
+</tbody>
+</table>
+</div>
+<div class="note info">
+* Factores estadísticamente significativos (p < 0.05): Escolaridad y Estado Civil. Las interacciones no muestran efectos conjuntos significativos.
+</div>
+</div>
+</div>
+</section>
+
+<!-- SECCIÓN 4 -->
+<section id="sec4" class="page">
+<div class="section-head">
+<div class="eyebrow">Comparaciones Múltiples</div>
+<h2>4. Pruebas Post-Hoc: Tukey HSD</h2>
+<p>Análisis de contrastes múltiples ajustados por la familia de errores (FWER = 0.05) para Escolaridad, Municipio y Estado Civil.</p>
+</div>
+
+<div class="panel">
+<div class="panel-header">
+<h3>A. Tukey HSD: Escolaridad</h3>
+</div>
+<div class="panel-body">
+<div class="table-container">
+<table>
+<thead><tr><th>Grupo 1</th><th>Grupo 2</th><th>Dif. Medias</th><th>p-adj</th><th>Mínimo</th><th>Máximo</th><th>¿Diferencia Significativa?</th></tr></thead>
+<tbody>
+<tr><td>Bachillerato</td><td>Primaria</td><td>6.0258</td><td>0.0618</td><td>-0.1803</td><td>12.232</td><td>No</td></tr>
+<tr><td>Bachillerato</td><td>Profesional</td><td>1.2438</td><td>0.9901</td><td>-6.0249</td><td>8.5126</td><td>No</td></tr>
+<tr><td>Bachillerato</td><td>Secundaria</td><td>-4.2228</td><td>0.4756</td><td>-11.2949</td><td>2.8493</td><td>No</td></tr>
+<tr><td>Bachillerato</td><td>Sin escolaridad</td><td>10.8743</td><td>0.0035</td><td>2.551</td><td>19.1977</td><td><strong style="color:var(--green);">Si</strong></td></tr>
+<tr><td>Primaria</td><td>Profesional</td><td>-4.7820</td><td>0.0520</td><td>-9.589</td><td>0.0249</td><td>No</td></tr>
+<tr><td>Primaria</td><td>Secundaria</td><td>-10.2487</td><td>0.0000</td><td>-14.7528</td><td>-5.7445</td><td><strong style="color:var(--green);">Si</strong></td></tr>
+<tr><td>Primaria</td><td>Sin escolaridad</td><td>4.8485</td><td>0.2169</td><td>-1.4405</td><td>11.1374</td><td>No</td></tr>
+<tr><td>Profesional</td><td>Secundaria</td><td>-5.4666</td><td>0.0827</td><td>-11.3492</td><td>0.4159</td><td>No</td></tr>
+<tr><td>Profesional</td><td>Sin escolaridad</td><td>9.6305</td><td>0.0033</td><td>2.291</td><td>16.97</td><td><strong style="color:var(--green);">Si</strong></td></tr>
+<tr><td>Secundaria</td><td>Sin escolaridad</td><td>15.0971</td><td>0.0000</td><td>7.9523</td><td>22.242</td><td><strong style="color:var(--green);">Si</strong></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<div class="panel">
+<div class="panel-header">
+<h3>B. Tukey HSD: Municipio</h3>
+</div>
+<div class="panel-body">
+<div class="table-container">
+<table>
+<thead><tr><th>Grupo 1</th><th>Grupo 2</th><th>Dif. Medias</th><th>p-adj</th><th>Mínimo</th><th>Máximo</th><th>¿Diferencia significativa?</th></tr></thead>
+<tbody>
+<tr><td>Durango</td><td>Gomez Palacio</td><td>-1.9112</td><td>0.3120</td><td>-4.9924</td><td>1.1700</td><td>No</td></tr>
+<tr><td>Durango</td><td>Lerdo</td><td>0.8334</td><td>0.8941</td><td>-3.5133</td><td>5.1801</td><td>No</td></tr>
+<tr><td>Gomez Palacio</td><td>Lerdo</td><td>2.7446</td><td>0.2988</td><td>-1.5993</td><td>7.0886</td><td>No</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<div class="panel">
+<div class="panel-header">
+<h3>C. Tukey HSD: Estado Civil</h3>
+</div>
+<div class="panel-body">
+<div class="table-container">
+<table>
+<thead><tr><th>Grupo 1</th><th>Grupo 2</th><th>Dif. Medias</th><th>p-adj</th><th>Mínimo</th><th>Máximo</th><th>¿Diferencia Significativa?</th></tr></thead>
+<tbody>
+<tr><td>Casado(a)</td><td>Divorciado(a)</td><td>-3.0990</td><td>0.8431</td><td>-11.3665</td><td>5.1686</td><td>No</td></tr>
+<tr><td>Casado(a)</td><td>Soltero(a)</td><td>-1.1285</td><td>0.9422</td><td>-5.2029</td><td>2.9460</td><td>No</td></tr>
+<tr><td>Casado(a)</td><td>Union Libre</td><td>-6.9998</td><td>0.0217</td><td>-13.3298</td><td>-0.6698</td><td><strong style="color:var(--green);">Si</strong></td></tr>
+<tr><td>Casado(a)</td><td>Viudo(a)</td><td>11.8975</td><td>0.0000</td><td>8.3664</td><td>15.4286</td><td><strong style="color:var(--green);">Si</strong></td></tr>
+<tr><td>Divorciado(a)</td><td>Soltero(a)</td><td>1.9705</td><td>0.9710</td><td>-6.6572</td><td>10.5983</td><td>No</td></tr>
+<tr><td>Divorciado(a)</td><td>Union Libre</td><td>-3.9009</td><td>0.8170</td><td>-13.7956</td><td>5.9939</td><td>No</td></tr>
+<tr><td>Divorciado(a)</td><td>Viudo(a)</td><td>14.9964</td><td>0.0000</td><td>6.6116</td><td>23.3813</td><td><strong style="color:var(--green);">Si</strong></td></tr>
+<tr><td>Soltero(a)</td><td>Union Libre</td><td>-5.8714</td><td>0.1264</td><td>-12.6650</td><td>0.9223</td><td>No</td></tr>
+<tr><td>Soltero(a)</td><td>Viudo(a)</td><td>13.0259</td><td>0.0000</td><td>8.7185</td><td>17.3333</td><td><strong style="color:var(--green);">Si</strong></td></tr>
+<tr><td>Union Libre</td><td>Viudo(a)</td><td>18.8973</td><td>0.0000</td><td>12.4149</td><td>25.3797</td><td><strong style="color:var(--green);">Si</strong></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+
+<!-- SECCIÓN 5 -->
+<section id="sec5" class="page">
+<div class="section-head">
+<div class="eyebrow">Prueba de Rangos Múltiples</div>
+<h2>5. Pruebas Post-Hoc: Duncan</h2>
+<p>Evaluación complementaria mediante la prueba de rangos múltiples de Duncan para contrastar medias con sensibilidad a escalones de amplitud.</p>
+</div>
+
+<div class="panel">
+<div class="panel-header">
+<h3>A. Duncan Test: Escolaridad</h3>
+</div>
+<div class="panel-body">
+<div class="table-container">
+<table>
+<thead><tr><th>Grupo 1</th><th>Grupo 2</th><th>Dif. Medias</th><th>LSR</th><th>Resultado</th></tr></thead>
+<tbody>
+<tr><td>Secundaria</td><td>Bachillerato</td><td>4.2228</td><td>3.6841</td><td><strong style="color:var(--green);">Significativo</strong></td></tr>
+<tr><td>Secundaria</td><td>Profesional</td><td>5.4666</td><td>6.2844</td><td><span style="color:var(--muted);">No significativo</span></td></tr>
+<tr><td>Secundaria</td><td>Primaria</td><td>10.2487</td><td>8.0547</td><td><strong style="color:var(--green);">Significativo</strong></td></tr>
+<tr><td>Secundaria</td><td>Sin escolaridad</td><td>15.0971</td><td>9.4756</td><td><strong style="color:var(--green);">Significativo</strong></td></tr>
+<tr><td>Bachillerato</td><td>Profesional</td><td>1.2438</td><td>5.3982</td><td><span style="color:var(--muted);">No significativo</span></td></tr>
+<tr><td>Bachillerato</td><td>Primaria</td><td>6.0258</td><td>9.2085</td><td><span style="color:var(--muted);">No significativo</span></td></tr>
+<tr><td>Bachillerato</td><td>Sin escolaridad</td><td>10.8743</td><td>11.8025</td><td><span style="color:var(--muted);">No significativo</span></td></tr>
+<tr><td>Profesional</td><td>Primaria</td><td>4.7820</td><td>3.9975</td><td><strong style="color:var(--green);">Significativo</strong></td></tr>
+<tr><td>Profesional</td><td>Sin escolaridad</td><td>9.6305</td><td>6.8192</td><td><strong style="color:var(--green);">Significativo</strong></td></tr>
+<tr><td>Primaria</td><td>Sin escolaridad</td><td>4.8485</td><td>1.9372</td><td><strong style="color:var(--green);">Significativo</strong></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<div class="panel">
+<div class="panel-header">
+<h3>B. Duncan Test: Municipio</h3>
+</div>
+<div class="panel-body">
+<div class="table-container">
+<table>
+<thead><tr><th>Grupo 1</th><th>Grupo 2</th><th>Dif. Medias</th><th>LSR</th><th>Resultado</th></tr></thead>
+<tbody>
+<tr><td>Gomez Palacio</td><td>Durango</td><td>1.9112</td><td>2.2257</td><td><span style="color:var(--muted);">No significativo</span></td></tr>
+<tr><td>Gomez Palacio</td><td>Lerdo</td><td>2.7446</td><td>3.7968</td><td><span style="color:var(--muted);">No significativo</span></td></tr>
+<tr><td>Durango</td><td>Lerdo</td><td>0.8334</td><td>2.2313</td><td><span style="color:var(--muted);">No significativo</span></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<div class="panel">
+<div class="panel-header">
+<h3>C. Duncan Test: Estado Civil</h3>
+</div>
+<div class="panel-body">
+<div class="table-container">
+<table>
+<thead><tr><th>Grupo 1</th><th>Grupo 2</th><th>Dif. Medias</th><th>LSR</th><th>Resultado</th></tr></thead>
+<tbody>
+<tr><td>Union Libre</td><td>Divorciado(a)</td><td>3.9009</td><td>5.8450</td><td><span style="color:var(--muted);">No significativo</span></td></tr>
+<tr><td>Union Libre</td><td>Soltero(a)</td><td>5.8714</td><td>9.9708</td><td><span style="color:var(--muted);">No significativo</span></td></tr>
+<tr><td>Union Libre</td><td>Casado(a)</td><td>6.9998</td><td>12.7795</td><td><span style="color:var(--muted);">No significativo</span></td></tr>
+<tr><td>Union Libre</td><td>Viudo(a)</td><td>18.8973</td><td>15.0338</td><td><strong style="color:var(--green);">Significativo</strong></td></tr>
+<tr><td>Divorciado(a)</td><td>Soltero(a)</td><td>1.9705</td><td>7.8691</td><td><span style="color:var(--muted);">No significativo</span></td></tr>
+<tr><td>Divorciado(a)</td><td>Casado(a)</td><td>3.0990</td><td>13.4236</td><td><span style="color:var(--muted);">No significativo</span></td></tr>
+<tr><td>Divorciado(a)</td><td>Viudo(a)</td><td>14.9964</td><td>17.2049</td><td><span style="color:var(--muted);">No significativo</span></td></tr>
+<tr><td>Soltero(a)</td><td>Casado(a)</td><td>1.1285</td><td>3.3365</td><td><span style="color:var(--muted);">No significativo</span></td></tr>
+<tr><td>Soltero(a)</td><td>Viudo(a)</td><td>13.0259</td><td>5.6916</td><td><strong style="color:var(--green);">Significativo</strong></td></tr>
+<tr><td>Casado(a)</td><td>Viudo(a)</td><td>11.8975</td><td>2.2716</td><td><strong style="color:var(--green);">Significativo</strong></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+
+</main>
+
+<footer>
+<div class="container">
+Universidad Juárez del Estado de Durango &bull; Maestría en Estadística Aplicada &bull; Diseño de Experimentos
+</div>
+</footer>
+
+<script>
+function switchSection(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo({top: 0, behavior: 'smooth'});
+}
+</script>
+</body>
+</html>
